@@ -1,0 +1,4 @@
+export enum VIDEO_TYPES {
+    YOUTUBE = 'YOUTUBE',
+    FILE_UPLOAD = 'FILE_UPLOAD',
+  }
