@@ -31,7 +31,7 @@ const VideosList = ({ data }: IProps) => {
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-10 w-full'>
             {
                 data.map((video, index) => (
-                    <Card key={index} className='cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-200 mr-16 p-1 relative '>
+                    <Card key={index} className='cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-200 md:mr-16 p-1 relative '>
                         <CardHeader>
                             {video.thumbnail ? video.type === VIDEO_TYPES.YOUTUBE ?
                                 <Image
@@ -39,10 +39,10 @@ const VideosList = ({ data }: IProps) => {
                                     width={300}
                                     height={150}
                                     alt={video.name}
-                                    className='rounded-t-md object-cover'
+                                    className='rounded-t-md object-cover w-full'
                                 />
                                 :
-                                <div className="py-5 rounded-t-md bg-black">
+                                <div className="py-5 rounded-t-md bg-black flex justify-center items-center md:block">
                                     <Image
                                         src={getCloudFrontURL(video.thumbnail)}
                                         width={300}

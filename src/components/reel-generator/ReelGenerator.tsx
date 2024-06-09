@@ -119,10 +119,10 @@ const ReelGenerator = () => {
   };
 
   return (
-    <div className="p-4 flex items-center flex-col">
-      <h1 className="text-4xl font-bold mb-10 text-primary">Short/Reel Generator</h1>
+    <div className="md:p-4 flex items-center flex-col">
+      <h1 className="md:text-4xl text-2xl font-bold mb-10 text-primary">Short/Reel Generator</h1>
       <div className="bg-slate-100 dark:bg-black w-full bg-opacity-50 p-6 border-1 rounded-md border-black border-opacity-5">
-        <h1 className="text-2xl font-bold text-primary">Upload Videos</h1>
+        <h1 className="md:text-2xl text-xl font-bold text-primary">Upload Videos</h1>
         <div className="mt-4">
           <h4 className="text-sm font-semibold text-gray-500">Upload video by URL</h4>
           <div className="mt-2 mb-5">

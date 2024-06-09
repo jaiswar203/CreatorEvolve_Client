@@ -5,6 +5,12 @@ export type utilState = {
   user: {
     _id?: string;
     access_token?: string;
+    name?: string;
+    email?: string;
+    credits?: string;
+    phone?: string;
+    access_code?: string;
+    roles?: string;
   };
 };
 
@@ -19,10 +25,13 @@ export const utilSlice = createSlice({
     setUser: (state, action: PayloadAction<object>) => {
       state.user = action.payload;
     },
+    logOutUser: (state) => {
+      state.user = {};
+    },
   },
 });
 
-export const {  setUser } = utilSlice.actions;
+export const { setUser, logOutUser } = utilSlice.actions;
 
 export const util = (state: RootState) => state._persist;
 
