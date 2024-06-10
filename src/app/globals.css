@@ -63,6 +63,18 @@
   border-width: 3px;
 }
 
+/* Custom styles to hide number input spinners */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+
 @layer base {
   * {
     @apply border-border;

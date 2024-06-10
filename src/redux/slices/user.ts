@@ -11,6 +11,8 @@ export type utilState = {
     phone?: string;
     access_code?: string;
     roles?: string;
+    is_youtube_authenticated?: string;
+    is_google_authenticated?: string;
   };
 };
 
