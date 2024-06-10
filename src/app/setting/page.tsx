@@ -1,4 +1,4 @@
-import Setting from '@/components/setting/Setting.tsx'
+import Setting from '@/components/setting/Setting'
 import React from 'react'
 
 const SettingPage = () => {
