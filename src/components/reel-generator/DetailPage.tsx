@@ -1,7 +1,7 @@
 "use client"
 
 import { VIDEO_TYPES } from '@/constants/video'
-import { getCloudFrontURL, secondsToHms } from '@/lib/utils'
+import { extractExtension, getCloudFrontURL, secondsToHms } from '@/lib/utils'
 import { IChaptersResponse, IExtractVideoDataInfo, useExtractShortContentMutation, useGenerateChaptersMutation, useGetVideoByIdQuery } from '@/redux/api/video'
 import Image from 'next/image'
 import React from 'react'
@@ -42,58 +42,6 @@ interface IFormInput {
     videoDimension: VideoDimension;
     contentType: { type: ContentGeneration }[]
 }
-
-const dummyRes = [
-    {
-        "id": 0,
-        "summary": "The video begins with an introduction to LeetCode, emphasizing its importance in the tech industry for securing high-paying jobs. The speaker shares personal experiences and insights on how LeetCode practice transformed their career, highlighting the usefulness of data structures and algorithms (DSA) knowledge. Despite the common perception of LeetCode being unnecessary for full-stack jobs, the speaker argues for its value in personal development and job preparation.",
-        "title": "Introduction to LeetCode and Its Impact",
-        "start": 0,
-        "end": 180
-    },
-    {
-        "id": 1,
-        "summary": "This section delves into effective strategies for mastering LeetCode problems, focusing on systems, processes, and methodologies. The speaker shares their journey of learning through trial and error, emphasizing the importance of understanding core algorithms and the role of repetition in mastering coding challenges. Insights into the evolution of LeetCode's resources over the years are shared, including the transition from forum discussions to detailed solution guides.",
-        "title": "Learning Methodologies for LeetCode",
-        "start": 180,
-        "end": 360
-    },
-    {
-        "id": 2,
-        "summary": "The video highlights the critical role of mastering fundamental concepts in programming, such as binary search and basic algorithms, before tackling medium or hard LeetCode problems. The speaker discusses the common pitfalls learners face, such as focusing on advanced problems without a solid understanding of the basics, and offers advice on incremental learning and the significance of repetition.",
-        "title": "The Importance of Fundamentals in Coding",
-        "start": 360,
-        "end": 540
-    },
-    {
-        "id": 3,
-        "summary": "In this segment, the focus shifts to more advanced problem-solving strategies, including the application of core algorithms like binary search, DFS, and BFS. The speaker shares personal advice on improving problem-solving skills, emphasizing the importance of practice and familiarity with basic algorithms to tackle complex LeetCode problems effectively.",
-        "title": "Advanced Problem-Solving Techniques",
-        "start": 540,
-        "end": 720
-    },
-    {
-        "id": 4,
-        "summary": "This chapter discusses the application of algorithms to solve complex LeetCode problems, stressing the importance of understanding the underlying principles of algorithms rather than memorizing solutions. The speaker encourages viewers to practice by solving problems repeatedly and to focus on the reasoning behind algorithms to enhance problem-solving skills.",
-        "title": "Applying Algorithms to Solve Complex Problems",
-        "start": 720,
-        "end": 900
-    },
-    {
-        "id": 5,
-        "summary": "The final section of the video emphasizes the importance of deeply understanding algorithms, beyond just being able to implement them. The speaker discusses the 'why' behind algorithmic solutions, the use of two pointers technique, and the significance of understanding the conditions under which certain algorithms are applied. The importance of curiosity, self-exploration, and the use of examples to grasp complex concepts is highlighted.",
-        "title": "Deep Dive into Algorithm Understanding",
-        "start": 900,
-        "end": 1080
-    },
-    {
-        "id": 6,
-        "summary": "The video concludes with a reflection on the importance of structured learning and practice in mastering programming and algorithmic problem-solving. The speaker reiterates the value of repetition, understanding the fundamentals, and the need for a curious mindset to excel in coding challenges like those found on LeetCode.",
-        "title": "Conclusion",
-        "start": 1080,
-        "end": 1083
-    }
-]
 
 const DetailPage = ({ id }: DetailProps) => {
     const { data } = useGetVideoByIdQuery(id, {
@@ -137,7 +85,8 @@ const DetailPage = ({ id }: DetailProps) => {
             if (contentType.findIndex((data) => data.type === ContentGeneration.CHAPTER) > -1)
                 await generateChaptersApi({ id, prompt }).unwrap()
 
-            await extractShortContentApi({ id, aspect, prompt }).unwrap()
+            if (contentType.findIndex((data) => data.type === ContentGeneration.REEL) > -1)
+                await extractShortContentApi({ id, aspect, prompt }).unwrap()
 
             if (data.success) toast({ title: "Shorts Generated", description: "Your short videos have been successfully generated.", variant: "success" })
             if (chaptersData?.success) toast({ title: "Chapters Generated", description: "Your chapters have been successfully generated.", variant: "success" })
@@ -159,8 +108,32 @@ const DetailPage = ({ id }: DetailProps) => {
         }
     }
 
+    const downloadVideo = async (videoUrl: string, name: string) => {
+        try {
+            const response = await fetch(videoUrl);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const videoExtention = extractExtension(videoUrl)
+            const videoName = `${name.replaceAll(" ", "-")}.${videoExtention}`
+
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = videoName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading video:', error);
+        }
+    };
+
     return (
-        <div className="p-5">
+        <div className=" md:p-5">
             <Link href={"/reel-generator"} replace>
                 <Button className='w-32 mb-4' variant={"secondary"}>
                     <ArrowLeft className='mr-4' />
@@ -168,12 +141,12 @@ const DetailPage = ({ id }: DetailProps) => {
                 </Button>
             </Link>
             <h1 className="text-3xl font-semibold text-primary">{video.name}</h1>
-            <div className="flex mt-5 items-start">
-                <div className="mr-4 w-3/4">
+            <div className="md:flex md:mt-5 md:items-start">
+                <div className="mr-4 md:w-3/4 w-full my-2 md:my-0">
                     <Image className='rounded-sm cursor-pointer' src={imgUrl} width={imageDimension.width} height={imageDimension.height} alt={video.name} />
                 </div>
 
-                <div className="w-full">
+                <div className="w-full mt-4 md:mt-0">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mb-4">
                             <Label htmlFor='prompt' className="text-lg font-semibold text-gray-700">Custom Prompt </Label>
@@ -183,9 +156,21 @@ const DetailPage = ({ id }: DetailProps) => {
                             <Textarea className='w-full resize-none h-28' {...register("prompt", { maxLength: 300 })} placeholder='Describe the type of short video you want to generate' id="prompt" />
                             {promptValue?.length >= 300 && <span className="text-red-600 text-xs">Should be less than 300 characters</span>}
                         </div>
-                        <div className="flex">
+                        <div className="flex ">
                             <div className='mr-10'>
-                                <Label className="text-lg font-semibold text-gray-700">Video Dimension</Label>
+                            <div className="flex items-start">
+                                <Label className="text-lg font-semibold text-gray-700">Dimension</Label>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Info size={12} className='ml-1 text-gray-600 font-bold' />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p className='text-xs text-center text-gray-500'>Dimension of the video could be portrait or landscapce, by default its portrait</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
                                 <div className="flex mt-3">
                                     <div className={`flex-col items-center justify-center cursor-pointer mr-5`} onClick={() => setValue("videoDimension", VideoDimension.NINE_SIXTEEN)}>
                                         <div className={`flex justify-center items-center w-14 rounded h-14 bg-slate-100 ${currentDimension === VideoDimension.NINE_SIXTEEN ? "border-primary border-3" : ""}`}>
@@ -226,7 +211,7 @@ const DetailPage = ({ id }: DetailProps) => {
                             </div>
                         </div>
                         <div className="mt-3">
-                            <Button className='w-32' type="submit" disabled={isLoading} loading={{
+                            <Button className='md:w-32 w-full' type="submit" disabled={isLoading} loading={{
                                 isLoading, customLoader: <ThreeCircles
                                     visible={true}
                                     height={25}
@@ -271,7 +256,7 @@ const DetailPage = ({ id }: DetailProps) => {
                                             </div>
                                         </DialogContent>
                                     </Dialog>
-                                    <Button>
+                                    <Button onClick={() => downloadVideo(data.url, data.title)}>
                                         <Save size={20} />
                                         <h3 className='ml-2'>Save Video</h3>
                                     </Button>

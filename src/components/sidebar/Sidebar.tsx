@@ -3,10 +3,8 @@
 import Link from "next/link"
 import React from "react"
 import {
-    CircleUser,
     Home,
     Menu,
-    Search,
     LucideIcon,
     Microscope,
     Film,
@@ -23,20 +21,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { useAppSelector } from "@/redux/hook"
+import { useAppDispatch, useAppSelector } from "@/redux/hook"
 import { APP_ROUTES } from "@/constants/routes"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { RiLogoutCircleLine } from "react-icons/ri";
+import { logOutUser } from "@/redux/slices/user"
 
 interface NavItem {
     href: string;
@@ -88,15 +81,19 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
     const pathname = usePathname()
     const { user } = useAppSelector((state) => state.user)
     const router = useRouter()
-
-    console.log({user})
+    const dispatch = useAppDispatch()
 
     if (pathname.startsWith("/auth")) return children
 
     if (!user?._id || !user?.access_token) {
-        
         router.push("/auth/login")
         return
+    }
+
+
+    const logOut = () => {
+        dispatch(logOutUser())
+        router.push("/auth/login")
     }
 
 
@@ -104,11 +101,12 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
         <div className="flex min-h-screen">
             <div className="hidden md:block md:w-[220px] lg:w-[280px] border-r bg-muted/40 h-screen sticky top-0">
                 <div className="flex h-full flex-col gap-2">
-                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
                         <Link href="/" className="flex items-center gap-2 font-semibold">
                             <Image src={"/assets/icon.webp"} width={45} height={45} alt="CE" className="rounded" />
                             <span>CreatorEvolve</span>
                         </Link>
+                        <RiLogoutCircleLine color="red" onClick={logOut} size={25} className="cursor-pointer" />
                     </div>
                     <div className="flex-1 overflow-auto">
                         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -118,19 +116,18 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
                         </nav>
                     </div>
                     <div className="mt-auto p-4">
-                        <Card>
-                            <CardHeader className="p-2 pt-0 md:p-4">
-                                <CardTitle>Upgrade to Pro</CardTitle>
-                                <CardDescription>
-                                    Unlock all features and get unlimited access to our support team.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                                <Button size="sm" className="w-full">
-                                    Upgrade
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <div className="flex">
+                            <Avatar className="w-16 h-16 mr-4">
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <div className="flex items-start flex-col ">
+                                <h2 className="font-semibold">{user.name}</h2>
+                                <p className="text-xs mb-1 text-gray-500">{user.email}</p>
+                                <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -150,19 +147,17 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
                                 ))}
                             </nav>
                             <div className="mt-auto">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Upgrade to Pro</CardTitle>
-                                        <CardDescription>
-                                            Unlock all features and get unlimited access to our support team.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Button size="sm" className="w-full">
-                                            Upgrade
-                                        </Button>
-                                    </CardContent>
-                                </Card>
+                            <div className="flex">
+                            <Avatar className="w-16 h-16 mr-4">
+                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <div className="flex items-start flex-col ">
+                                <h2 className="font-medium">{user.name}</h2>
+                                <p className="text-sm text-gray-500">{user.email}</p>
+                                <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
+                            </div>
+                        </div>
                             </div>
                         </SheetContent>
                     </Sheet>

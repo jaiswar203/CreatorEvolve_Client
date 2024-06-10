@@ -15,3 +15,10 @@ export const secondsToHms = (seconds: number): string => {
 
   return [hours, minutes, secs].map((v) => (v < 10 ? "0" + v : v)).join(":");
 };
+
+export const extractExtension = (url: string) => {
+  if (!url) return;
+  
+  const match = url.match(/\.(\w+)(?:\?.*)?$/);
+  return match ? match[1] : null;
+};
