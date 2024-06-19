@@ -1,8 +1,9 @@
 "use client"
 
 import { VIDEO_TYPES } from '@/constants/video'
-import { extractExtension, getCloudFrontURL, secondsToHms } from '@/lib/utils'
-import { IChaptersResponse, IExtractVideoDataInfo, useExtractShortContentMutation, useGenerateChaptersMutation, useGetVideoByIdQuery } from '@/redux/api/video'
+import { downloadVideo, getCloudFrontURL, secondsToHms } from '@/lib/utils'
+import { useExtractShortContentMutation, useGenerateChaptersMutation, useGetVideoByIdQuery } from '@/redux/api/media'
+import { IChaptersResponse, IExtractVideoDataInfo } from "@/redux/interfaces/media"
 import Image from 'next/image'
 import React from 'react'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
@@ -108,29 +109,6 @@ const DetailPage = ({ id }: DetailProps) => {
         }
     }
 
-    const downloadVideo = async (videoUrl: string, name: string) => {
-        try {
-            const response = await fetch(videoUrl);
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-
-            const videoExtention = extractExtension(videoUrl)
-            const videoName = `${name.replaceAll(" ", "-")}.${videoExtention}`
-
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = videoName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-
-            URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error('Error downloading video:', error);
-        }
-    };
 
     return (
         <div className=" md:p-5">
@@ -158,8 +136,8 @@ const DetailPage = ({ id }: DetailProps) => {
                         </div>
                         <div className="flex ">
                             <div className='mr-10'>
-                            <div className="flex items-start">
-                                <Label className="text-lg font-semibold text-gray-700">Dimension</Label>
+                                <div className="flex items-start">
+                                    <Label className="text-lg font-semibold text-gray-700">Dimension</Label>
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger>

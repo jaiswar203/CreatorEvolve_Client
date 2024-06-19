@@ -13,6 +13,7 @@ export type utilState = {
     roles?: string;
     is_youtube_authenticated?: string;
     is_google_authenticated?: string;
+    img?: string;
   };
 };
 

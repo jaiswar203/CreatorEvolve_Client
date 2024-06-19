@@ -42,8 +42,8 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
     { href: APP_ROUTES.DASHBOARD, icon: Home, label: "Dashboard" },
     { href: APP_ROUTES.REEL_GENERATOR, icon: Film, label: "Short/Reel Generator" },
-    { href: APP_ROUTES.RESEARCH_WIZARD, icon: Microscope, label: "Research Wizard" },
     { href: APP_ROUTES.VOICE, icon: AudioLines, label: "Voice" },
+    { href: APP_ROUTES.RESEARCH_WIZARD, icon: Microscope, label: "Research Wizard" },
     { href: APP_ROUTES.THUMBNAIL, icon: ImageIcon, label: "Thumbnail" },
     { href: APP_ROUTES.SETTING, icon: Settings, label: "Setting" },
 ];
@@ -86,14 +86,14 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
     if (pathname.startsWith("/auth")) return children
 
     if (!user?._id || !user?.access_token) {
-        router.push("/auth/login")
+        router.push(APP_ROUTES.SIGNIN)
         return
     }
 
 
     const logOut = () => {
         dispatch(logOutUser())
-        router.push("/auth/login")
+        router.push(APP_ROUTES.SIGNIN)
     }
 
 
@@ -115,7 +115,7 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
                             ))}
                         </nav>
                     </div>
-                    <div className="mt-auto p-4">
+                    <div className="mt-auto p-4 border-t ">
                         <div className="flex">
                             <Avatar className="w-16 h-16 mr-4">
                                 <AvatarImage src="https://github.com/shadcn.png" />
@@ -146,18 +146,18 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
                                     <NavigationLink key={index} {...item} active={pathname === item.href} />
                                 ))}
                             </nav>
-                            <div className="mt-auto">
-                            <div className="flex">
-                            <Avatar className="w-16 h-16 mr-4">
-                                <AvatarImage src="https://github.com/shadcn.png" />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                            <div className="flex items-start flex-col ">
-                                <h2 className="font-medium">{user.name}</h2>
-                                <p className="text-sm text-gray-500">{user.email}</p>
-                                <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
-                            </div>
-                        </div>
+                            <div className="mt-auto ">
+                                <div className="flex border-t">
+                                    <Avatar className="w-16 h-16 mr-4">
+                                        <AvatarImage src={user?.img} />
+                                        <AvatarFallback>CN</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex items-start flex-col ">
+                                        <h2 className="font-medium">{user.name}</h2>
+                                        <p className="text-sm text-gray-500">{user.email}</p>
+                                        <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
+                                    </div>
+                                </div>
                             </div>
                         </SheetContent>
                     </Sheet>

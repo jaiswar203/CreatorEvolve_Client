@@ -26,7 +26,7 @@ interface IVerifyUser {
 }
 
 export const authApi = createApi({
-  reducerPath: "video",
+  reducerPath: "auth",
   baseQuery: fetchBaseQuery({ baseUrl: authUrl }),
   endpoints: (builder) => ({
     loginUser: builder.mutation<IResponse, ILoginRequest>({
