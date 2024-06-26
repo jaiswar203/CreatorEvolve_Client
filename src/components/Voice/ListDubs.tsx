@@ -18,7 +18,7 @@ import {
 import { IDubs } from '@/redux/interfaces/media';
 import { targetLanguages } from '@/constants/audio';
 import { Button } from '../ui/button';
-import { downloadVideo, trimText } from '@/lib/utils';
+import { downloadFile, trimText } from '@/lib/utils';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import CustomVideoPlayer from '../CustomVideoPlayer/CustomVideoPlayer';
 import { useRemoveDubbedFileMutation } from '@/redux/api/media';
@@ -106,7 +106,7 @@ const ListDubs: React.FC<IDubsList> = ({ data }) => {
                                             </div>
                                         </DialogContent>
                                     </Dialog>
-                                    <div className='w-10 h-10  cursor-pointer bg-primary text-white flex items-center justify-center rounded-full text-xs' onClick={() => downloadVideo(dub.url, dub.name)}>
+                                    <div className='w-10 h-10  cursor-pointer bg-primary text-white flex items-center justify-center rounded-full text-xs' onClick={() => downloadFile(dub.url, dub.name)}>
                                         <MdDownload size={18} />
                                     </div>
                                     <div className='w-10 h-10  cursor-pointer bg-destructive flex items-center justify-center rounded-full text-xs' onClick={() => onRemoveDubbingHandler(dub._id)}>

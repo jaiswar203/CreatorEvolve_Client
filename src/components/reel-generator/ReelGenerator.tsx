@@ -5,7 +5,7 @@ import { useGetVideosQuery, useUploadVideoFilesToTLMutation, useUploadYTVideoToT
 import { useToast } from '../ui/use-toast'
 import VideosList from './VideosList'
 import VideoUploader from '../common/VideoUploader'
-import { IVideo, VIDEO_TYPES } from '@/constants/video'
+import { IMedia, VIDEO_TYPES } from '@/constants/video'
 
 const ReelGenerator = () => {
   const { data, refetch } = useGetVideosQuery({tl:true}, {
@@ -20,7 +20,7 @@ const ReelGenerator = () => {
   const isLoading = ytVideoApiIsLoading || videoFileApiIsLoading;
   const { toast } = useToast();
 
-  const handleVideoUpload = async (video: IVideo) => {
+  const handleVideoUpload = async (video: IMedia) => {
     try {
       if (video.type === VIDEO_TYPES.YOUTUBE) {
         const response = await uploadYTVideoApi({ url: video.data as string, thumbnail: video.thumbnail as string, name: video.title as string }).unwrap();
