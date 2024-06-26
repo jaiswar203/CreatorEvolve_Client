@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/table';
 import { IDubs } from '@/redux/interfaces/media';
 import { targetLanguages } from '@/constants/audio';
-import { Button } from '../ui/button';
 import { downloadFile, trimText } from '@/lib/utils';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import CustomVideoPlayer from '../CustomVideoPlayer/CustomVideoPlayer';
@@ -31,11 +30,11 @@ interface IDubsList {
 }
 
 const ListDubs: React.FC<IDubsList> = ({ data }) => {
-    if (!data) return
-
     const [removeDubbingApi] = useRemoveDubbedFileMutation()
 
     const { toast } = useToast()
+
+    if (!data) return null
 
     const language = (code: string) => targetLanguages?.find(lan => code === lan.value)?.name
 

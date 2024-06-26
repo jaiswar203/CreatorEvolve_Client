@@ -6,7 +6,7 @@ import VoiceOver from './VoiceOver';
 import { useGetMediaDubsQuery } from '@/redux/api/media';
 import ListDubs from './ListDubs';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import VoiceClonning from './VoiceCloning';
+import VoiceClonning from './Clone/Clone';
 
 const Voice = () => {
     const { data: mediaDubs, refetch } = useGetMediaDubsQuery("")

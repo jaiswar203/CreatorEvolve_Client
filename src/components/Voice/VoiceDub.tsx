@@ -90,11 +90,11 @@ const VoiceDub = ({ refetch }: { refetch: () => {} }) => {
                 const formData = new FormData()
                 if (media.media_type === "audio") {
                     formData.append("audio", media.data)
-                    response = await uploadAudioFileApi({body:formData}).unwrap()
+                    response = await uploadAudioFileApi({ body: formData }).unwrap()
                     setMedia({ id: response.data._id, url: response.data.url, type: "audio" })
                 } else {
                     formData.append("video", media.data)
-                    response = await uploadVideoFileApi({body:formData}).unwrap()
+                    response = await uploadVideoFileApi({ body: formData }).unwrap()
                     setMedia({ id: response.data._id, url: response.data.url, type: "video" })
                 }
             }
@@ -302,7 +302,7 @@ const VoiceDub = ({ refetch }: { refetch: () => {} }) => {
                     <div className="flex my-4 bg-red-100 bg-opacity-60 py-3 px-2">
                         <MdCancel className='mr-2 text-red-400' size={20} />
                         <p className="text-red-400 font-medium text-sm ">
-                            "Please select a target language"
+                            &quot;Please select a target language&quot;
                         </p>
                     </div>
                     : null

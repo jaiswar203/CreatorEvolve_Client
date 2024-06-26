@@ -78,8 +78,8 @@ const SharedVoices = ({ libVoices, onPlayerDataHandler }: { libVoices: IVoicesLi
                 <ScrollArea className="h-72 w-full">
                     {
                         isLoading ? [1, 2, 3, 4, 5].map(
-                            () => (
-                                <div className="flex justify-between items-center mb-2" >
+                            (_,index) => (
+                                <div className="flex justify-between items-center mb-2" key={index}>
                                     <Skeleton className="h-8 w-8 rounded-full" />
                                     <div className="flex items-center">
                                         <Skeleton className="w-[330px] h-8" />
