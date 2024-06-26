@@ -1,7 +1,7 @@
 "use client"
 
 import { VIDEO_TYPES } from '@/constants/video'
-import { downloadVideo, getCloudFrontURL, secondsToHms } from '@/lib/utils'
+import { downloadFile, getCloudFrontURL, secondsToHms } from '@/lib/utils'
 import { useExtractShortContentMutation, useGenerateChaptersMutation, useGetVideoByIdQuery } from '@/redux/api/media'
 import { IChaptersResponse, IExtractVideoDataInfo } from "@/redux/interfaces/media"
 import Image from 'next/image'
@@ -234,7 +234,7 @@ const DetailPage = ({ id }: DetailProps) => {
                                             </div>
                                         </DialogContent>
                                     </Dialog>
-                                    <Button onClick={() => downloadVideo(data.url, data.title)}>
+                                    <Button onClick={() => downloadFile(data.url, data.title)}>
                                         <Save size={20} />
                                         <h3 className='ml-2'>Save Video</h3>
                                     </Button>

@@ -102,3 +102,5 @@ export const videoResolution = [
     value: false,
   },
 ];
+
+export const DEFAULT_VOICE_ID = process.env.NEXT_PUBLIC_DEFAULT_VOICE_ID;

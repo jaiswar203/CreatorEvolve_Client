@@ -58,6 +58,7 @@ const CustomVideoPlayer = ({ url, width }: { url: string, width?: string }) => {
                     value={[progress]}
                     onValueChange={handleSliderChange}
                     className="w-full"
+                    defaultValue={[0]}
                 />
                 <Button onClick={handlePlayPause} className="mt-2">
                     {isPlaying ? <Pause size={20} /> : <CirclePlay size={20} />}

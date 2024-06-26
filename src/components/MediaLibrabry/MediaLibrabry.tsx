@@ -27,7 +27,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
                     <TabsTrigger className='w-full' value="videos">Videos</TabsTrigger>
                     <TabsTrigger className='w-full' value="audios">Audios</TabsTrigger>
                 </TabsList>
-                <TabsContent value="videos" className='overflow-auto relative h-4/5'>
+                <TabsContent value="videos" className='overflow-auto relative h-48vh'>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
                         {videos?.data?.length && videos?.data?.map((video: any) => (
                             <div
@@ -63,7 +63,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
                         ))}
                     </div>
                 </TabsContent>
-                <TabsContent value="audios" className='overflow-auto relative h-3/5'>
+                <TabsContent value="audios" className='overflow-auto relative h-48vh'>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
                         {audios?.data?.length && audios?.data?.map((audio: any) => (
                             <div

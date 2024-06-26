@@ -3,17 +3,32 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IResponse } from "./auth";
 import { RootState } from "../store";
 import {
+  IAddSharedVoiceInLibrary,
   IChapterRequest,
   IChaptersResponse,
   IDubRequest,
   IDubsList,
   IExtractVideo,
   IExtractVideoResponse,
+  IGenerateRandomVoiceParamResponse,
+  IGenerateRandomVoiceRequest,
+  IGenerateRandomVoiceResponse,
+  ISaveRandomGeneratedVoiceRequest,
+  ISharedVoiceListResponse,
   IUploadYTVideo,
   IVideoByIdResponse,
+  IVoiceListResponse,
+  TextToSpeechRequest,
 } from "../interfaces/media";
 
 const URI = `${process.env.NEXT_PUBLIC_API_URL}/media`;
+
+export interface InstantVoiceCloneRequest {
+  name: string;
+  files: string[];
+  description: string;
+  labels: { key: string; value: string }[];
+}
 
 export const mediaApi = createApi({
   reducerPath: "media",
@@ -25,7 +40,7 @@ export const mediaApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Video", "Dub", "Chapter", "Audio"],
+  tagTypes: ["Video", "Dub", "Chapter", "Audio", "Voices"],
   endpoints: (builder) => ({
     getVideos: builder.query<IResponse, { tl?: boolean }>({
       query: ({ tl = false }: { tl?: boolean } = {}) => `/videos?tl=${tl}`,
@@ -41,21 +56,29 @@ export const mediaApi = createApi({
       query: (id: string) => `/videos/${id}`,
       providesTags: (result, error, id) => [{ type: "Video", id }],
     }),
-    uploadVideoFile: builder.mutation<IResponse, FormData>({
-      query: (body: FormData) => ({
+    uploadVideoFile: builder.mutation<
+      IResponse,
+      { body: FormData; invalidate?: boolean }
+    >({
+      query: ({ body }) => ({
         url: `/videos/upload`,
         method: HTTP_REQUEST.POST,
         body,
       }),
-      invalidatesTags: [{ type: "Video", id: "LIST" }],
+      invalidatesTags: (result, error, { invalidate = true }) =>
+        invalidate ? [{ type: "Video", id: "LIST" }] : [],
     }),
-    uploadAudioFile: builder.mutation<IResponse, FormData>({
-      query: (body: FormData) => ({
+    uploadAudioFile: builder.mutation<
+      IResponse,
+      { body: FormData; invalidate?: boolean }
+    >({
+      query: ({ body }) => ({
         url: `/audios/upload`,
         method: HTTP_REQUEST.POST,
         body,
       }),
-      invalidatesTags: [{ type: "Video", id: "LIST" }],
+      invalidatesTags: (result, error, { invalidate = true }) =>
+        invalidate ? [{ type: "Video", id: "LIST" }] : [],
     }),
     uploadVideoUrl: builder.mutation<IResponse, IUploadYTVideo>({
       query: (body: IUploadYTVideo) => ({
@@ -127,6 +150,95 @@ export const mediaApi = createApi({
       query: () => `/audios/dubbing/all`,
       providesTags: [{ type: "Dub", id: "LIST" }],
     }),
+    getVoicesList: builder.query<IVoiceListResponse, string>({
+      query: () => `/audios/voices`,
+      providesTags: (result) =>
+        result ? [{ type: "Voices", id: "LIST" }] : ["Voices"],
+      extraOptions: {
+        maxCacheDuration: 3600,
+      },
+    }),
+    getSharedVoicesList: builder.query<ISharedVoiceListResponse, string>({
+      query: () => `/audios/voices/shared`,
+      providesTags: (result) =>
+        result ? [{ type: "Voices", id: "LIST_SHARED" }] : ["Voices"],
+    }),
+    addSharedVoiceInLibrary: builder.mutation<
+      IResponse,
+      IAddSharedVoiceInLibrary
+    >({
+      query: (body: IAddSharedVoiceInLibrary) => ({
+        url: `/audios/voices/add/${body.public_owner_id}/${
+          body.voice_id
+        }?name=${encodeURIComponent(body.name)}`,
+        method: HTTP_REQUEST.POST,
+      }),
+      invalidatesTags: (result, error) =>
+        result ? [{ type: "Voices", id: "LIST" }] : [],
+    }),
+    textToSpeech: builder.mutation<IResponse, TextToSpeechRequest>({
+      query: (body: TextToSpeechRequest) => ({
+        url: `/audios/text-to-speech`,
+        method: HTTP_REQUEST.POST,
+        body,
+      }),
+    }),
+    instantVoiceClone: builder.mutation<IResponse, InstantVoiceCloneRequest>({
+      query: (body: InstantVoiceCloneRequest) => ({
+        url: `/audios/voices/add`,
+        method: HTTP_REQUEST.POST,
+        body,
+      }),
+      invalidatesTags: (result, error) =>
+        result ? [{ type: "Voices", id: "LIST" }] : [{ type: "Voices" }],
+    }),
+    getRandonVoiceGenerationParams: builder.query<
+      IGenerateRandomVoiceParamResponse,
+      string
+    >({
+      query: () => `/audios/voices/random/params`,
+    }),
+    generateRandomVoice: builder.mutation<
+      IGenerateRandomVoiceResponse,
+      IGenerateRandomVoiceRequest
+    >({
+      query: (body: IGenerateRandomVoiceRequest) => ({
+        url: `/audios/voices/random`,
+        method: HTTP_REQUEST.POST,
+        body,
+      }),
+    }),
+    saveRandomGeneratedVoice: builder.mutation<
+      IResponse,
+      ISaveRandomGeneratedVoiceRequest
+    >({
+      query: (body: ISaveRandomGeneratedVoiceRequest) => ({
+        url: `/audios/voices/random/save`,
+        method: HTTP_REQUEST.POST,
+        body,
+      }),
+      invalidatesTags: (result, error) =>
+        result ? [{ type: "Voices", id: "LIST" }] : [{ type: "Voices" }],
+    }),
+    sendProfessionalVoiceCloneInquiry: builder.mutation({
+      query: ({
+        email,
+        name,
+        phone,
+      }: {
+        email: string;
+        phone: string;
+        name: string;
+      }) => ({
+        url: "/audios/voices/professional",
+        method: HTTP_REQUEST.POST,
+        body: {
+          email,
+          phone,
+          name,
+        },
+      }),
+    }),
   }),
   refetchOnFocus: true,
   refetchOnReconnect: true,
@@ -148,4 +260,14 @@ export const {
   useGetMediaDubsQuery,
   useRemoveDubbedFileMutation,
   useUploadAudioFileMutation,
+  useGetVoicesListQuery,
+  useGetSharedVoicesListQuery,
+  useAddSharedVoiceInLibraryMutation,
+  useLazyGetSharedVoicesListQuery,
+  useTextToSpeechMutation,
+  useInstantVoiceCloneMutation,
+  useGetRandonVoiceGenerationParamsQuery,
+  useGenerateRandomVoiceMutation,
+  useSaveRandomGeneratedVoiceMutation,
+  useSendProfessionalVoiceCloneInquiryMutation
 } = mediaApi;

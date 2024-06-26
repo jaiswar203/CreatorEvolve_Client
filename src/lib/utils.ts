@@ -26,13 +26,13 @@ export const extractExtension = (url: string) => {
 export const trimText = (text: string, len: number) =>
   text.length > len ? `${text.slice(0, len)}...` : text;
 
-export const downloadVideo = async (videoUrl: string, name: string) => {
+export const downloadFile = async (fileUrl: string, name: string) => {
   try {
-    const response = await fetch(videoUrl);
+    const response = await fetch(fileUrl);
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
 
-    const videoExtention = extractExtension(videoUrl);
+    const videoExtention = extractExtension(fileUrl);
     const videoName = `${name.replaceAll(" ", "-")}.${videoExtention}`;
 
     const a = document.createElement("a");
