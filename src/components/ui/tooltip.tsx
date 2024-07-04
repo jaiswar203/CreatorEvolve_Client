@@ -1,15 +1,50 @@
-"use client"
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { TooltipTriggerContext } from "./tooltip-trigger-context";
+import { isMobile } from "react-device-detect";
+import { cn } from "@/lib/utils";
 
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+const TooltipProvider = TooltipPrimitive.Provider;
 
-import { cn } from "@/lib/utils"
+const Tooltip = ({
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) => {
+  const [open, setOpen] = React.useState(false);
 
-const TooltipProvider = TooltipPrimitive.Provider
+  return (
+    <TooltipPrimitive.Root
+      open={open}
+      onOpenChange={setOpen}
+      delayDuration={isMobile ? 0 : props.delayDuration}
+    >
+      <TooltipTriggerContext.Provider value={{ open, setOpen }}>
+        {children}
+      </TooltipTriggerContext.Provider>
+    </TooltipPrimitive.Root>
+  );
+};
 
-const Tooltip = TooltipPrimitive.Root
+const TooltipTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
+>(({ children, ...props }, ref) => {
+  const { setOpen } = React.useContext(TooltipTriggerContext);
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+  const handleClick = () => {
+    if (isMobile) {
+      setOpen((prevOpen) => !prevOpen);
+    }
+  };
+
+  return (
+    <TooltipPrimitive.Trigger ref={ref} onClick={handleClick} {...props}>
+      {children}
+    </TooltipPrimitive.Trigger>
+  );
+});
+
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName;
 
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
@@ -24,7 +59,7 @@ const TooltipContent = React.forwardRef<
     )}
     {...props}
   />
-))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

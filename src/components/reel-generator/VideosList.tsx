@@ -16,7 +16,6 @@ import {
 import { ThreeCircles } from 'react-loader-spinner'
 import Link from 'next/link'
 import { APP_ROUTES } from '@/constants/routes'
-import { getCloudFrontURL } from '@/lib/utils'
 import { VIDEO_TYPES } from '@/constants/video'
 
 
@@ -43,12 +42,13 @@ const VideosList = ({ data }: IProps) => {
                                 />
                                 :
                                 <div className="py-5 rounded-t-md bg-black flex justify-center items-center md:block">
-                                    <Image
-                                        src={getCloudFrontURL(video.thumbnail)}
+                                    <img
+                                        src={video.thumbnail}
+                                        
                                         width={300}
                                         height={150}
                                         alt={video.name}
-                                        className='rounded-t-md object-cover'
+                                        className='rounded-t-md object-cover h-40'
                                     />
                                 </div>
                                 : <div className="flex w-full border-1 bg-gray-200 h-46 justify-center items-center  rounded-md mr-4">

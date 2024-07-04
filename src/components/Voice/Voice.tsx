@@ -7,6 +7,7 @@ import { useGetMediaDubsQuery } from '@/redux/api/media';
 import ListDubs from './ListDubs';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import VoiceClonning from './Clone/Clone';
+import Enhance from './Enhance/Enhance';
 
 const Voice = () => {
     const { data: mediaDubs, refetch } = useGetMediaDubsQuery("")
@@ -24,16 +25,17 @@ const Voice = () => {
         router.push(`${pathname}?${params.toString()}`)
     }
 
-    const currentTab = searchParams.get('tab') || 'dubbing'
+    const currentTab = searchParams.get('tab') || 'enhance'
     return (
         <div className="md:p-4 flex flex-col">
             <div className="mb-10">
-                <h1 className="md:text-3xl text-2xl font-bold text-primary">Voice Feature</h1>
-                <p className="text-gray-500 text-sm font-medium">Effortlessly transform lengthy content into captivating short-form videos. Enhance engagement and reach by generating concise, impactful videos from your extensive content library.</p>
+                <h1 className="md:text-3xl text-2xl font-bold text-primary">Elevate Your Audio with Advanced AI Voice Tools</h1>
+                <p className="text-gray-500 text-sm font-medium">Improve your videos with our AI audio features. Use the Voiceover Generator for clear, consistent sound, keep your own voice style with Voice Cloning, and get crystal-clear audio with Speech Enhancement and Noise Reduction. Make your videos sound as good as they look and keep your audience engaged.</p>
             </div>
             <div>
                 <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
                     <TabsList className='w-full'>
+                        <TabsTrigger className='w-full' value="enhance">Voice Enhancer </TabsTrigger>
                         <TabsTrigger className='w-full' value="dubbing">Voice Dubbing</TabsTrigger>
                         <TabsTrigger className='w-full' value="voiceover">Voice Over</TabsTrigger>
                     </TabsList>
@@ -44,6 +46,9 @@ const Voice = () => {
                     <TabsContent value="voiceover">
                         <VoiceClonning />
                         <VoiceOver />
+                    </TabsContent>
+                    <TabsContent value='enhance'>
+                        <Enhance />
                     </TabsContent>
                 </Tabs>
             </div>

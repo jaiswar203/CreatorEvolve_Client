@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useUploadFileMutation } from '@/redux/api/app';
-import { getCloudFrontURL, trimText } from '@/lib/utils';
+import { trimText } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import prettyBytes from 'pretty-bytes';
 import { useInstantVoiceCloneMutation } from '@/redux/api/media';
@@ -80,7 +80,7 @@ const InstantCloneForm: React.FC<InstantCloneFormProps> = ({ setIsFormDialogOpen
             formData.append("file", file);
 
             const response = await fileUploadApi(formData).unwrap();
-            const url = getCloudFrontURL(response.data);
+            const url = response.data as string
             setUploadedFiles(prev => [...prev, { name: file.name, url, size: file.size }]);
 
             append({ url: response.data });

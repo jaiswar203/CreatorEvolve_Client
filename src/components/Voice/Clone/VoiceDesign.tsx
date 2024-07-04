@@ -13,7 +13,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { getCloudFrontURL } from '@/lib/utils';
 import { PiInfoFill } from 'react-icons/pi';
 import { Badge } from '@/components/ui/badge';
 
@@ -64,7 +63,7 @@ const VoiceDesignForm: React.FC<InstantCloneFormProps> = ({ setIsFormDialogOpen 
         const onGenerateRandomVoiceHandler: SubmitHandler<VoiceGenerateFormData> = async (data) => {
             try {
                 const resp = await generateRandomVoiceApi(data).unwrap()
-                const preview = getCloudFrontURL(resp.data.preview)
+                const preview = resp.data.preview
                 setGeneratedVoice({ preview, voice_id: resp.data.voice_id, gender: data.gender, age: data.age, accent: data.accent })
             } catch (error) {
                 toast({ title: "Error occurred", description: "Error Occured while generating random voice, please try againg", variant: "destructive" })

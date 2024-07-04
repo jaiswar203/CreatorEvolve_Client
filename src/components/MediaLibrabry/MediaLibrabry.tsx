@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { getCloudFrontURL, trimText } from '@/lib/utils';
+import { trimText } from '@/lib/utils';
 import { ImageIcon } from 'lucide-react';
 import { VIDEO_TYPES } from '@/constants/video';
 import { useGetAudiosQuery, useGetVideosQuery } from '@/redux/api/media';
@@ -16,7 +16,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
     const { data: videos } = useGetVideosQuery({});
     const { data: audios } = useGetAudiosQuery("")
 
-    const handleSelect = (video: any,type:MediaType) => {
+    const handleSelect = (video: any, type: MediaType) => {
         onSelect(video, type);
     };
 
@@ -32,7 +32,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
                         {videos?.data?.length && videos?.data?.map((video: any) => (
                             <div
                                 className="flex flex-col cursor-pointer"
-                                onClick={() => handleSelect(video,"video")}
+                                onClick={() => handleSelect(video, "video")}
                                 key={video._id}
                             >
                                 {video.thumbnail ? video.type === VIDEO_TYPES.YOUTUBE ? (
@@ -46,7 +46,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
                                 ) : (
                                     <div className="py-5 rounded bg-black flex justify-center items-center md:block">
                                         <Image
-                                            src={getCloudFrontURL(video.thumbnail)}
+                                            src={video.thumbnail}
                                             width={300}
                                             height={300}
                                             alt={video.name}
@@ -68,7 +68,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect }) => {
                         {audios?.data?.length && audios?.data?.map((audio: any) => (
                             <div
                                 className="flex flex-col cursor-pointer"
-                                onClick={() => handleSelect(audio,"audio")}
+                                onClick={() => handleSelect(audio, "audio")}
                                 key={audio._id}
                             >
                                 <div className="flex w-48 border-1 bg-gray-200 h-40 justify-center items-center rounded-md mr-4">
