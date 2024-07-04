@@ -19,6 +19,9 @@ import {
   IVideoByIdResponse,
   IVoiceListResponse,
   TextToSpeechRequest,
+  IEnhanceRequest,
+  IEnhancedAudiosList,
+  IDiagnosedAudioListResponse,
 } from "../interfaces/media";
 
 const URI = `${process.env.NEXT_PUBLIC_API_URL}/media`;
@@ -40,7 +43,15 @@ export const mediaApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Video", "Dub", "Chapter", "Audio", "Voices"],
+  tagTypes: [
+    "Video",
+    "Dub",
+    "Chapter",
+    "Audio",
+    "Voices",
+    "Enhances",
+    "Diagnose",
+  ],
   endpoints: (builder) => ({
     getVideos: builder.query<IResponse, { tl?: boolean }>({
       query: ({ tl = false }: { tl?: boolean } = {}) => `/videos?tl=${tl}`,
@@ -239,11 +250,82 @@ export const mediaApi = createApi({
         },
       }),
     }),
+    getEnhancedAudioList: builder.query<IEnhancedAudiosList, void>({
+      query: () => `/audios/enhance/list`,
+      providesTags: () => [{ type: "Enhances", id: "LIST" }],
+    }),
+    enhanceAudio: builder.mutation<IResponse, IEnhanceRequest>({
+      query: ({ mediaId, settings, content, type }: IEnhanceRequest) => ({
+        url: `/audios/enhance/${mediaId}?type=${type}`,
+        method: HTTP_REQUEST.POST,
+        body: { ...settings, content },
+      }),
+      invalidatesTags: [{ type: "Enhances", id: "LIST" }], // Ensure this invalidates correctly on success
+    }),
+    removeEnhancedAudio: builder.mutation({
+      query: (enhanceId: string) => ({
+        url: `/audios/enhance/${enhanceId}`,
+        method: HTTP_REQUEST.DELETE,
+      }),
+      invalidatesTags: [{ type: "Enhances", id: "LIST" }], // Ensure this invalidates correctly on success
+    }),
+    diagnoseAudio: builder.mutation({
+      query: ({
+        content,
+        mediaId,
+        type,
+      }: {
+        mediaId: string;
+        type: string;
+        content: string;
+      }) => ({
+        url: `/audios/diagnose/${mediaId}?type=${type}&content=${content}`,
+        method: HTTP_REQUEST.POST,
+      }),
+      invalidatesTags: ["Diagnose"],
+    }),
+    generateDetailedInfoOnLoudness: builder.mutation<
+      IResponse,
+      {
+        platform: string;
+        mediaId: string;
+      }
+    >({
+      query: ({
+        mediaId,
+        platform,
+      }: {
+        platform: string;
+        mediaId: string;
+      }) => ({
+        url: `/audios/diagnose/${mediaId}/detailed/loudness?platform=${platform}`,
+        method: HTTP_REQUEST.POST,
+      }),
+    }),
+    getDiagnosedAudioList: builder.query<IDiagnosedAudioListResponse, void>({
+      query: () => ({
+        url: `/audios/diagnose/list`,
+      }),
+      providesTags: () => ["Diagnose"],
+    }),
+    enhanceAudioWithDiagnose: builder.mutation({
+      query: ({
+        mediaId,
+        type,
+        platform,
+        loudness,
+      }: {
+        mediaId: string;
+        type: string;
+        platform: string;
+        loudness: object;
+      }) => ({
+        url: `/audios/enhance/diagnose/${mediaId}?type=${type}&platform=${platform}`,
+        method: HTTP_REQUEST.POST,
+        body: loudness,
+      }),
+    }),
   }),
-  refetchOnFocus: true,
-  refetchOnReconnect: true,
-  refetchOnMountOrArgChange: true,
-  keepUnusedDataFor: 0,
 });
 
 export const {
@@ -269,5 +351,12 @@ export const {
   useGetRandonVoiceGenerationParamsQuery,
   useGenerateRandomVoiceMutation,
   useSaveRandomGeneratedVoiceMutation,
-  useSendProfessionalVoiceCloneInquiryMutation
+  useSendProfessionalVoiceCloneInquiryMutation,
+  useEnhanceAudioMutation,
+  useGetEnhancedAudioListQuery,
+  useRemoveEnhancedAudioMutation,
+  useDiagnoseAudioMutation,
+  useGenerateDetailedInfoOnLoudnessMutation,
+  useGetDiagnosedAudioListQuery,
+  useEnhanceAudioWithDiagnoseMutation,
 } = mediaApi;

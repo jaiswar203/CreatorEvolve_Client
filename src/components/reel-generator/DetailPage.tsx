@@ -1,7 +1,7 @@
 "use client"
 
 import { VIDEO_TYPES } from '@/constants/video'
-import { downloadFile, getCloudFrontURL, secondsToHms } from '@/lib/utils'
+import { downloadFile, secondsToHms } from '@/lib/utils'
 import { useExtractShortContentMutation, useGenerateChaptersMutation, useGetVideoByIdQuery } from '@/redux/api/media'
 import { IChaptersResponse, IExtractVideoDataInfo } from "@/redux/interfaces/media"
 import Image from 'next/image'
@@ -71,7 +71,7 @@ const DetailPage = ({ id }: DetailProps) => {
 
     if (!data?.success || !video) return null
 
-    const imgUrl = video.type === VIDEO_TYPES.FILE_UPLOAD ? getCloudFrontURL(video.thumbnail) : video.thumbnail
+    const imgUrl = video.thumbnail
 
     const imageDimension = {
         width: video.type === VIDEO_TYPES.FILE_UPLOAD ? 500 : 450,

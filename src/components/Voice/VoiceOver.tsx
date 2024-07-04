@@ -24,7 +24,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { DEFAULT_VOICE_ID } from '@/constants/audio';
 import { Switch } from '../ui/switch';
 import { useToast } from '../ui/use-toast';
-import { downloadFile, getCloudFrontURL, trimText } from '@/lib/utils';
+import { downloadFile, trimText } from '@/lib/utils';
 import { useState } from 'react';
 import { MdDownload, MdPlayArrow } from 'react-icons/md';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
@@ -70,7 +70,7 @@ const VoiceOver = () => {
             const resp = await textToSpeechApi({ voice_id: data.voice_id, text: data.text, similarity_boost: data.similarity_boost, stability: data.stability, style: data.style, use_speaker_boost: data.use_speaker_boost }).unwrap()
             const voiceName = voicesList?.data.public.find((voice) => voice.id === data.voice_id) || voicesList?.data.private.find((voice) => voice.id === data.voice_id)
 
-            const url = getCloudFrontURL(resp.data)
+            const url = resp.data
             setGeneratedSpeech(prev => [...prev, { name: voiceName?.name ?? "", url, text: data.text }])
         } catch (error) {
             toast({ title: "Error occured", description: "Error Occured while performing voice synthesis, please try again", variant: "destructive" })

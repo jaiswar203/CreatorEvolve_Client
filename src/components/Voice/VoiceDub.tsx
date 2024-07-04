@@ -29,7 +29,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { MdInfo as Info } from "react-icons/md";
-import { getCloudFrontURL, getYouTubeVideoId } from '@/lib/utils'
+import { getYouTubeVideoId } from '@/lib/utils'
 import { FaMinus } from 'react-icons/fa'
 
 import useSSE, { SSEData } from '@/hooks/useSSE'
@@ -108,7 +108,7 @@ const VoiceDub = ({ refetch }: { refetch: () => {} }) => {
     const onLibrarySelectHandler = async (media: any, type: MediaType) => {
         if (!media) return
 
-        let url = getCloudFrontURL(media?.url)
+        let url = media?.url
         if (type === "video" && media?.type === VIDEO_TYPES.YOUTUBE) {
             url = media.url
         }

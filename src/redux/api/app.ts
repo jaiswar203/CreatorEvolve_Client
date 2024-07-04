@@ -23,7 +23,13 @@ export const appApi = createApi({
         body,
       }),
     }),
+    getMedia: builder.mutation<IResponse, string>({
+      query: (key: string) => ({
+        url: `/media/${encodeURIComponent(key)}`,
+        method: HTTP_REQUEST.GET,
+      }),
+    }),
   }),
 });
 
-export const { useUploadFileMutation } = appApi;
+export const { useUploadFileMutation, useGetMediaMutation } = appApi;
