@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import React from "react"
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import {
     Home,
     Menu,
@@ -10,26 +10,19 @@ import {
     Film,
     AudioLines,
     Image as ImageIcon,
-    Settings
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
-import { useAppDispatch, useAppSelector } from "@/redux/hook"
-import { APP_ROUTES } from "@/constants/routes"
+    Settings,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { usePathname, useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { APP_ROUTES } from "@/constants/routes";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { logOutUser } from "@/redux/slices/user"
+import { logOutUser } from "@/redux/slices/user";
+import Image from "next/image";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
 interface NavItem {
     href: string;
@@ -54,22 +47,25 @@ interface NavigationLinkProps {
     label: string;
     badge?: number;
     active?: boolean;
+    collapsed?: boolean;
 }
 
-const NavigationLink: React.FC<NavigationLinkProps> = ({ href, icon: Icon, label, badge, active }) => (
+const NavigationLink: React.FC<NavigationLinkProps> = ({ href, icon: Icon, label, badge, active, collapsed }) => (
     <Link
         href={href}
-        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${active ? "bg-muted text-primary" : "text-muted-foreground hover:text-primary"}`}
+        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${active ? "bg-muted text-primary" : "text-muted-foreground hover:text-primary"} ${collapsed ? "justify-center" : ""}`}
     >
         <Icon className="h-4 w-4" />
-        <p className="text-sm 4xl:text-base ">{label}</p>
-        {
-            badge && (
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    {badge}
-                </Badge>
-            )
-        }
+        {!collapsed && (
+            <>
+                <p className="text-sm">{label}</p>
+                {badge && (
+                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                        {badge}
+                    </Badge>
+                )}
+            </>
+        )}
     </Link>
 );
 
@@ -78,56 +74,75 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ children }) => {
-    const pathname = usePathname()
-    const { user } = useAppSelector((state) => state.user)
-    const router = useRouter()
-    const dispatch = useAppDispatch()
+    const [collapsed, setCollapsed] = useState(false);
+    const pathname = usePathname();
+    const { user } = useAppSelector((state) => state.user);
+    const router = useRouter();
+    const dispatch = useAppDispatch();
 
-    if (pathname.startsWith("/auth")) return children
+    useEffect(() => {
+        setTimeout(() => {
+            setCollapsed(true)
+        }, 3000)
+    }, [])
+
+    if (pathname.startsWith("/auth")) return children;
 
     if (!user?._id || !user?.access_token) {
-        router.push(APP_ROUTES.SIGNIN)
-        return
+        router.push(APP_ROUTES.SIGNIN);
+        return;
     }
-
 
     const logOut = () => {
-        dispatch(logOutUser())
-        router.push(APP_ROUTES.SIGNIN)
-    }
+        dispatch(logOutUser());
+        router.push(APP_ROUTES.SIGNIN);
+    };
 
 
     return (
         <div className="flex min-h-screen">
-            <div className="hidden md:block md:w-[220px] lg:w-[280px] border-r bg-muted/40 h-screen sticky top-0">
+            <div
+                className={`hidden md:block transition-all duration-300 ${collapsed ? "md:w-20 lg:w-20" : "md:w-[220px] lg:w-[280px]"
+                    } border-r bg-muted/40 h-screen sticky top-0`}
+                onMouseEnter={() => setCollapsed(false)}
+                onMouseLeave={() => setCollapsed(true)}
+            >
                 <div className="flex h-full flex-col gap-2">
                     <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
                         <Link href="/" className="flex items-center gap-2 font-semibold">
                             <Image src={"/assets/icon.webp"} width={45} height={45} alt="CE" className="rounded" />
-                            <span>CreatorEvolve</span>
+                            {!collapsed && <span>CreatorEvolve</span>}
                         </Link>
-                        <RiLogoutCircleLine color="red" onClick={logOut} size={25} className="cursor-pointer" />
+                        {!collapsed && (
+                            <RiLogoutCircleLine
+                                color="red"
+                                onClick={logOut}
+                                size={25}
+                                className="cursor-pointer"
+                            />
+                        )}
                     </div>
                     <div className="flex-1 overflow-auto">
                         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                             {NAV_ITEMS.map((navItem, index) => (
-                                <NavigationLink key={index} {...navItem} active={pathname.includes(navItem.href)} />
+                                <NavigationLink key={index} {...navItem} active={pathname.includes(navItem.href)} collapsed={collapsed} />
                             ))}
                         </nav>
                     </div>
                     <div className="mt-auto p-4 border-t ">
                         <div className="flex">
-                            <Avatar className="w-16 h-16 mr-4">
+                            <Avatar className={`${collapsed ? "w-12 h-12" : "w-16 h-16"} mr-4`}>
                                 <AvatarImage src="https://github.com/shadcn.png" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            <div className="flex items-start flex-col ">
-                                <h2 className="font-semibold">{user.name}</h2>
-                                <p className="text-xs mb-1 text-gray-500">{user.email}</p>
-                                <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
-                            </div>
+                            {!collapsed && (
+                                <div className="flex items-start flex-col ">
+                                    <h2 className="font-semibold">{user.name}</h2>
+                                    <p className="text-xs mb-1 text-gray-500">{user.email}</p>
+                                    <p className="text-xs font-semibold text-primary">Credits: {user.credits}</p>
+                                </div>
+                            )}
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -155,44 +170,14 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
                                     <div className="flex items-start flex-col ">
                                         <h2 className="font-medium">{user.name}</h2>
                                         <p className="text-sm text-gray-500">{user.email}</p>
-                                        <p className="text-xs font-semibold text-primary">Credits: {user.credits} </p>
+                                        <p className="text-xs font-semibold text-primary">Credits: {user.credits}</p>
                                     </div>
                                 </div>
                             </div>
                         </SheetContent>
                     </Sheet>
-                    {/* <div className="w-full flex-1">
-                        <form>
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Search products..."
-                                    className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                                />
-                            </div>
-                        </form>
-                    </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="secondary" size="icon" className="rounded-full">
-                                <CircleUser className="h-5 w-5" />
-                                <span className="sr-only">Toggle user menu</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu> */}
                 </header>
-                <main className="flex-1 overflow-auto p-4 lg:p-6">
-                    {children}
-                </main>
+                <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
             </div>
         </div>
     );

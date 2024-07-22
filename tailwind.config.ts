@@ -23,7 +23,14 @@ const config = {
     extend: {
       height: {
         "48vh": "48vh",
+        "60vh": "60vh",
+        "75vh": "75vh",
+        "65vh": "65vh",
       },
+      width: {
+        "33vw": "33vw",
+      },
+      borderWidth: {},
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

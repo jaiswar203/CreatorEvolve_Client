@@ -14,12 +14,14 @@ import storage from "redux-persist/lib/storage";
 import { thunk } from "redux-thunk";
 import { mediaApi } from "./api/media";
 import { appApi } from "./api/app";
+import { researchApi } from "./api/research";
 
 const rootReducer = combineReducers({
   user: userSlice,
   [authApi.reducerPath]: authApi.reducer,
   [mediaApi.reducerPath]: mediaApi.reducer,
   [appApi.reducerPath]: appApi.reducer,
+  [researchApi.reducerPath]: researchApi.reducer,
 });
 
 const persistConfig = {
@@ -42,7 +44,8 @@ export const makeStore = () =>
         .concat(thunk)
         .concat(authApi.middleware)
         .concat(mediaApi.middleware)
-        .concat(appApi.middleware),
+        .concat(appApi.middleware)
+        .concat(researchApi.middleware),
   });
 
 // Infer the type of makeStore
