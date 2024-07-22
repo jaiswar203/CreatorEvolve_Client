@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -50,7 +49,6 @@
   }
 }
 
-
 .border-1 {
   border-width: 1px;
 }
@@ -64,16 +62,15 @@
 }
 
 /* Custom styles to hide number input spinners */
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-input[type='number'] {
-    -moz-appearance: textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
-
 
 @layer base {
   * {
@@ -81,5 +78,48 @@ input[type='number'] {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* src/styles.css */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1; /* thumb color and track color */
+}
+
+/* For Webkit browsers */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+
+    &:hover {
+      background: #555;
+    }
   }
 }

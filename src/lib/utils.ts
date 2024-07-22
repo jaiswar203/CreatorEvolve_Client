@@ -1,5 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import TurndownService from "turndown";
+
+const turndownService = new TurndownService();
+
+export function convertHtmlToMarkdown(html: any) {
+  return turndownService.turndown(html);
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
