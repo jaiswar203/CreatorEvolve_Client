@@ -17,7 +17,7 @@ CreatorEvolve is an AI-powered platform designed to enhance the productivity of 
 ### Setup and Installation
 
 1. **Clone the Repository**:
-    `git clone https://github.com/your-repo/creator-evolve-frontend.git`
+    `git clone https://github.com/Creator-Evolve/client`
     
 2. **Install Dependencies**:    
     `npm ci` / `npm i`
